@@ -44,7 +44,7 @@ class Pokemon extends React.Component {
         state={{
           id: this.props.id,
           name: this.props.name,
-          img: this.props.image,
+          img: "../" + this.props.image,
           intro: this.props.introduction,
         }}
       >
