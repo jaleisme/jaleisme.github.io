@@ -1,6 +1,29 @@
 gsap.registerPlugin(ScrollTrigger);
 
-// Hero photo-strips: follow scroll, rotate opposite directions
+window.addEventListener("load", () => {
+  // Hide scroll container initially
+  gsap.set("#scroll-container", { opacity: 0 });
+
+  // Create a timeline to sequence animations
+  const tl = gsap.timeline();
+
+  // Animate preload shrinking
+  tl.to("#preload", {
+    height: 0,
+    duration: 2,
+    ease: "expo.inOut"
+  });
+
+  // Fade in scroll container after preload animation
+  tl.to("#scroll-container", {
+    opacity: 1,
+    duration: 1,
+    ease: "sine.inOut"
+  });
+});
+/* --------------------------------
+Hero: subtle floating photo strips
+------------------------------------ */
 gsap.to(".photo-strip", {
   y: -18,
   duration: 2,
@@ -9,10 +32,9 @@ gsap.to(".photo-strip", {
   yoyo: true
 });
 
-
-
-
-
+/* --------------------------------
+Beginning: horizontal scroll
+------------------------------------ */
 const track = document.querySelector(".beginning-track");
 const cards = gsap.utils.toArray(".card");
 
@@ -34,43 +56,89 @@ gsap.to(track, {
   }
 });
 
-
+/* --------------------------------
+Beginning: theme trigger (dark ↔ light)
+------------------------------------ */
 ScrollTrigger.create({
   trigger: ".beginning",
   start: "top 60%",
-  onEnter: () => {
-    gsap.to("#scroll-container", {
-      backgroundColor: "#101010",
-      duration: 0.6,
-      ease: "power2.out"
-    });
-
-    gsap.to(".beginning-title", {
-      color: "#ffffff",
-      textShadow: "0 0 12px rgba(255,255,255,0.25)",
-      duration: 0.6,
-      ease: "power2.out"
-    });
-  },
-  onLeaveBack: () => {
-    gsap.to("#scroll-container", {
-      backgroundColor: "#F9F5EC",
-      duration: 0.6,
-      ease: "power2.out"
-    });
-
-    gsap.to(".beginning-title", {
-      color: "#101010",
-      textShadow: "0 0 0 rgba(0,0,0,0)",
-      duration: 0.6,
-      ease: "power2.out"
-    });
+  end: "bottom top",
+  invalidateOnRefresh: true,
+  onToggle: self => {
+    setBeginningTheme(self.isActive);
   }
 });
 
+function setBeginningTheme(isDark) {
+  gsap.to("#scroll-container", {
+    backgroundColor: isDark ? "#101010" : "#F9F5EC",
+    duration: 0.6,
+    ease: "power2.out",
+    overwrite: "auto"
+  });
 
+  gsap.to(".beginning-title", {
+    color: isDark ? "#ffffff" : "#101010",
+    textShadow: isDark
+      ? "0 0 12px rgba(255,255,255,0.25)"
+      : "0 0 0 rgba(0,0,0,0)",
+    duration: 0.6,
+    ease: "power2.out",
+    overwrite: "auto"
+  });
+}
+
+/* --------------------------------
+Letter Animation (keeps <br> line breaks)
+------------------------------------ */
+const letterContainer = document.querySelector(".letter-container");
+
+if (letterContainer) {
+  const html = letterContainer.innerHTML.trim();
+
+  const wrappedHTML = html
+    .split(/(<br\s*\/?>)/gi) // keep <br>
+    .map(chunk => {
+      if (chunk.toLowerCase().includes("<br")) return chunk;
+
+      return chunk
+        .split(" ")
+        .map(word => {
+          if (!word.trim()) return word;
+          return `<span class="letter-word">${word}</span>`;
+        })
+        .join(" ");
+    })
+    .join("");
+
+  letterContainer.innerHTML = wrappedHTML;
+
+  gsap.fromTo(".letter-word",
+    {
+      opacity: 0.15,
+      y: "0.6em"
+    },
+    {
+      opacity: 1,
+      y: "0em",
+      ease: "power3.out",
+      duration: 0.9,
+      stagger: 0.03,
+      scrollTrigger: {
+        trigger: ".letter",
+        start: "top 70%",
+        once: true
+      }
+    }
+  );
+}
+
+/* --------------------------------
+Flair animation helper
+------------------------------------ */
 function playAnimation(shape) {
   let tl = gsap.timeline();
+
   tl.from(shape, {
     opacity: 0,
     scale: 0,
@@ -87,10 +155,10 @@ function playAnimation(shape) {
 }
 
 /* --------------------------------
-Scoped to .final hover only
-------------------------------------*/
+Final: image trail (scoped only to .final)
+------------------------------------ */
 const finalSection = document.querySelector(".final");
-let flair = gsap.utils.toArray(".flair");
+const flair = gsap.utils.toArray(".flair");
 
 let gap = 100;
 let index = 0;
@@ -100,24 +168,21 @@ gsap.defaults({ duration: 1 });
 let mousePos = { x: 0, y: 0 };
 let lastMousePos = { x: 0, y: 0 };
 let cachedMousePos = { x: 0, y: 0 };
-
 let isHoveringFinal = false;
 
-// Only track mouse inside .final
-finalSection.addEventListener("mousemove", (e) => {
-  mousePos = {
-    x: e.clientX,
-    y: e.clientY
-  };
-});
+if (finalSection) {
+  finalSection.addEventListener("mousemove", (e) => {
+    mousePos = { x: e.clientX, y: e.clientY };
+  });
 
-finalSection.addEventListener("mouseenter", () => {
-  isHoveringFinal = true;
-});
+  finalSection.addEventListener("mouseenter", () => {
+    isHoveringFinal = true;
+  });
 
-finalSection.addEventListener("mouseleave", () => {
-  isHoveringFinal = false;
-});
+  finalSection.addEventListener("mouseleave", () => {
+    isHoveringFinal = false;
+  });
+}
 
 gsap.ticker.add(ImageTrail);
 
@@ -154,7 +219,6 @@ function animateImage() {
   if (!img) return;
 
   gsap.killTweensOf(img);
-
   gsap.set(img, { clearProps: "all" });
 
   gsap.set(img, {

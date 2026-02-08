@@ -18,16 +18,24 @@
     <link rel="stylesheet" href="./assets/style.css">
 </head>
 <body>
+    <div id="preload"></div>
+
     <div id="scroll-container"  class="bg-[#F9F5EC]">
+        
+
+        <!-- Hero Section -->
         <div class="hero flex flex-row justify-center items center relative overflow-hidden">
             <img src="./assets/img/photostrip-1.png" alt="photostrips" class="photo-strip rotate-345 absolute top-[12vh] left-[-1vw]">
             <div class="text-editorial text-dark min-h-[100vh] h-100 w-auto flex flex-col items-center justify-center gap-4">
                 <span class="text-base">A Quiet Place I Return To</span>
                 <h1 class="text-6xl">When I Miss You</h1>
-                <span class="button text-montreal text-sm">Read Our Story</span>
+                <span class="button text-montreal text-sm flex font-medium items-center">Scroll to Read Our Story <img class="h-[2rem]" src="./assets/mouse.gif" alt="gif"></span>
             </div>
             <img src="./assets/img/photostrip-2.png" alt="photostrips" class="photo-strip rotate-15 absolute top-[12vh] right-[-1vw]">
         </div>
+
+
+        <!-- Beginning Section -->
         <div class="beginning min-h-[100vh] overflow-hidden px-[8vw] py-[12vh] gap-8 text-editorial">
             <h1 class="beginning-title text-6xl text-center">It All Start With</h1>
 
@@ -49,55 +57,109 @@
                 <div class="card w-[30vw] shrink-0 flex flex-col bg-white shadow-md rounded-2xl gap-2 px-[1rem] py-[1.25rem] items-center">
                     <img src="./assets/img/clay.png" class="card-img rounded-xl h-[50vh] w-full object-cover">
                     <span class="italic text-md">
-                        <span class="text-3xl">A</span>nd Many Unforgettable Moments Together
-                    </span>
-                </div>
-                <div class="card w-[30vw] shrink-0 flex flex-col bg-white shadow-md rounded-2xl gap-2 px-[1rem] py-[1.25rem] items-center">
-                    <img src="./assets/img/shoes.png" class="card-img rounded-xl h-[50vh] w-full object-cover">
-                    <span class="italic text-md">
-                        <span class="text-3xl">S</span>tarted with Matching Shoes
+                        <span class="text-3xl">T</span>hen Our Cute Clay Date
                     </span>
                 </div>
 
                 <div class="card w-[30vw] shrink-0 flex flex-col bg-white shadow-md rounded-2xl gap-2 px-[1rem] py-[1.25rem] items-center">
-                    <img src="./assets/img/blue-shirt.png" class="card-img rounded-xl h-[50vh] w-full object-cover">
+                    <video  class="card-img rounded-xl h-[50vh] w-full object-cover" autoplay muted loop playsinline>
+                        <source src="./assets/img/photobooth.mp4" type="video/mp4" />
+                    </video>                    
                     <span class="italic text-md">
-                        <span class="text-3xl">B</span>ecome Our First Date
+                        <span class="text-3xl">C</span>ountless Photobooth Sessions
                     </span>
                 </div>
 
                 <div class="card w-[30vw] shrink-0 flex flex-col bg-white shadow-md rounded-2xl gap-2 px-[1rem] py-[1.25rem] items-center">
-                    <img src="./assets/img/clay.png" class="card-img rounded-xl h-[50vh] w-full object-cover">
+                    <img src="./assets/img/red.jpeg" class="card-img rounded-xl h-[50vh] w-full object-cover">
                     <span class="italic text-md">
-                        <span class="text-3xl">A</span>nd Many Unforgettable Moments Together
+                        <span class="text-3xl">W</span>ears Same Outfit as Baskara & Meidiana
+                    </span>
+                </div>
+
+                <div class="card w-[30vw] shrink-0 flex flex-col bg-white shadow-md rounded-2xl gap-2 px-[1rem] py-[1.25rem] items-center">
+                    <img src="./assets/img/lego.jpeg" class="card-img rounded-xl h-[50vh] w-full object-cover">
+                    <span class="italic text-md">
+                        <span class="text-3xl">B</span>uilding Lego & Eat Sushi
+                    </span>
+                </div>
+            
+                <div class="card w-[30vw] shrink-0 flex flex-col bg-white shadow-md rounded-2xl gap-2 px-[1rem] py-[1.25rem] items-center">
+                    <img src="./assets/img/birthday.jpeg" class="card-img rounded-xl h-[50vh] w-full object-cover">
+                    <span class="italic text-md">
+                        <span class="text-3xl">C</span>elebrating Your Birthday Together
+                    </span>
+                </div>
+                
+                <div class="card w-[30vw] shrink-0 flex flex-col bg-white shadow-md rounded-2xl gap-2 px-[1rem] py-[1.25rem] items-center">
+                    <img src="./assets/img/braga.jpeg" class="card-img rounded-xl h-[50vh] w-full object-cover">
+                    <span class="italic text-md">
+                        <span class="text-3xl">W</span>alk Around Bandung
+                    </span>
+                </div>
+    
+                <div class="card w-[30vw] shrink-0 flex flex-col bg-white shadow-md rounded-2xl gap-2 px-[1rem] py-[1.25rem] items-center">
+                    <img src="./assets/img/wk.jpeg" class="card-img rounded-xl h-[50vh] w-full object-cover">
+                    <span class="italic text-md">
+                        <span class="text-3xl">T</span>he "Who Knows" Pose
+                    </span>
+                </div>
+    
+                <div class="card w-[30vw] shrink-0 flex flex-col bg-white shadow-md rounded-2xl gap-2 px-[1rem] py-[1.25rem] items-center">
+                    <img src="./assets/img/cam.jpeg" class="card-img rounded-xl h-[50vh] w-full object-cover">
+                    <span class="italic text-md">
+                        <span class="text-3xl">C</span>apturing Places & Moments
                     </span>
                 </div>
             </div>
-
+            
             <div class="w-full beginning-title text-center">And Many Unforgettable Memories</div>
         </div>
+        
+
+
+        <!-- Letter Section -->
+        <div class="letter min-h-[100vh] relative overflow-hidden px-[8vw] py-[12vh] flex items-center italic font-regular">
+            
+
+            <!-- Video Background -->
+            <video class="letter-bg-video" autoplay muted loop playsinline>
+                <source src="./assets/bg-vid.mp4" type="video/mp4" />
+            </video>
+
+            <!-- Dark Overlay -->
+            <div class="letter-overlay"></div>
+
+            <!-- Text -->
+            <p class="letter-container relative z-10 text-white text-lg leading-loose tracking-wide whitespace-pre-line max-w-xl mx-auto text-editorial">
+            I know we’re far apart,<br>
+            but being with you still makes me feel close. Every day is just another day until our next vacation together.<br>
+            I won’t lie and say I can’t live without you — I can — but life wouldn’t feel the same. The little things would lose their color; the world would still be loud and chaotic, but everything in it would feel quieter inside me.<br>
+            You make me feel whole. You lift me when I’m at my lowest. Your presence, even through a screen, feels like a warm hug — even if it’s just a small smooch from our late-night video calls.<br>
+            Thank you for being in my life, for choosing this relationship with me, and for giving me the chance to prove, again and again, that you mean the world to me.<br>
+            I love you. ❤️
+            </p>
+
+
+        </div>
+
+
     </div>
     <!-- Final Section -->
-    <div class="final min-h-[100vh] h-100 w-auto bg-black text-white flex items-center justify-center">
-        <span>Move your mouse ✨</span>
-        <img class="flair" src="https://assets.codepen.io/16327/Revised+Flair.png" alt="">
-        <img class="flair" src="https://assets.codepen.io/16327/Revised+Flair-1.png" alt="">
-        <img class="flair" src="https://assets.codepen.io/16327/Revised+Flair-2.png" alt="">
-        <img class="flair" src="https://assets.codepen.io/16327/Revised+Flair-3.png" alt="">
-        <img class="flair" src="https://assets.codepen.io/16327/Revised+Flair-4.png" alt="">
-        <img class="flair" src="https://assets.codepen.io/16327/Revised+Flair-5.png" alt="">
-        <img class="flair" src="https://assets.codepen.io/16327/Revised+Flair-6.png" alt="">
-        <img class="flair" src="https://assets.codepen.io/16327/Revised+Flair-7.png" alt="">
-        <img class="flair" src="https://assets.codepen.io/16327/Revised+Flair-8.png" alt="">
-        <img class="flair" src="https://assets.codepen.io/16327/Revised+Flair.png" alt="">
-        <img class="flair" src="https://assets.codepen.io/16327/Revised+Flair-1.png" alt="">
-        <img class="flair" src="https://assets.codepen.io/16327/Revised+Flair-2.png" alt="">
-        <img class="flair" src="https://assets.codepen.io/16327/Revised+Flair-3.png" alt="">
-        <img class="flair" src="https://assets.codepen.io/16327/Revised+Flair-4.png" alt="">
-        <img class="flair" src="https://assets.codepen.io/16327/Revised+Flair-5.png" alt="">
-        <img class="flair" src="https://assets.codepen.io/16327/Revised+Flair-6.png" alt="">
-        <img class="flair" src="https://assets.codepen.io/16327/Revised+Flair-7.png" alt="">
-        <img class="flair" src="https://assets.codepen.io/16327/Revised+Flair-8.png" alt="">
+    <div class="final min-h-[100vh] h-100 w-auto bg-black text-white flex flex-col items-center justify-center gap-4">
+        <span class="text-4xl text-editorial">Cheers to All Moments We've Had & Many More to Come.</span>
+        <span class="text-base text-montreal italic">Want to see a magic trick? Move your mouse ✨</span>
+        <img class="flair" src="./assets/img/1.png" alt="">
+        <img class="flair" src="./assets/img/2.png" alt="">
+        <img class="flair" src="./assets/img/3.png" alt="">
+        <img class="flair" src="./assets/img/4.png" alt="">
+        <img class="flair" src="./assets/img/5.png" alt="">
+        <img class="flair" src="./assets/img/6.png" alt="">
+        <img class="flair" src="./assets/img/7.png" alt="">
+        <img class="flair" src="./assets/img/8.png" alt="">
+        <img class="flair" src="./assets/img/9.png" alt="">
+        <img class="flair" src="./assets/img/10.png" alt="">
+        <img class="flair" src="./assets/img/11.png" alt="">
     </div>
 </body>
 </html>
