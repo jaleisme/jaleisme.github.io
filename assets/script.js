@@ -1,26 +1,62 @@
 gsap.registerPlugin(ScrollTrigger);
 
+/* --------------------------------
+Desktop-only gate
+------------------------------------ */
+function isMobileDevice() {
+  return (
+    /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+    window.matchMedia("(pointer: coarse)").matches ||
+    window.innerWidth < 1024
+  );
+}
+
+if (isMobileDevice()) {
+  document.body.innerHTML = `
+    <div style="
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      padding:2rem;
+      font-family: system-ui, sans-serif;
+      background:#0f0f0f;
+      color:white;
+    ">
+      <div>
+        <h1 style="font-size:2rem; margin-bottom:1rem;">Desktop Experience Only</h1>
+        <p style="opacity:.7; max-width:420px; margin:0 auto;">
+          This experience is crafted for desktop.  
+          Please open it on a laptop or desktop device.
+        </p>
+      </div>
+    </div>
+  `;
+  throw new Error("Blocked mobile devices");
+}
+
+/* --------------------------------
+Preload → reveal
+------------------------------------ */
 window.addEventListener("load", () => {
-  // Hide scroll container initially
   gsap.set("#scroll-container", { opacity: 0 });
 
-  // Create a timeline to sequence animations
   const tl = gsap.timeline();
 
-  // Animate preload shrinking
   tl.to("#preload", {
     height: 0,
     duration: 2,
     ease: "expo.inOut"
   });
 
-  // Fade in scroll container after preload animation
   tl.to("#scroll-container", {
     opacity: 1,
     duration: 1,
     ease: "sine.inOut"
   });
 });
+
 /* --------------------------------
 Hero: subtle floating photo strips
 ------------------------------------ */
@@ -57,7 +93,7 @@ gsap.to(track, {
 });
 
 /* --------------------------------
-Beginning: theme trigger (dark ↔ light)
+Beginning: theme trigger
 ------------------------------------ */
 ScrollTrigger.create({
   trigger: ".beginning",
@@ -89,7 +125,7 @@ function setBeginningTheme(isDark) {
 }
 
 /* --------------------------------
-Letter Animation (keeps <br> line breaks)
+Letter Animation
 ------------------------------------ */
 const letterContainer = document.querySelector(".letter-container");
 
@@ -97,7 +133,7 @@ if (letterContainer) {
   const html = letterContainer.innerHTML.trim();
 
   const wrappedHTML = html
-    .split(/(<br\s*\/?>)/gi) // keep <br>
+    .split(/(<br\s*\/?>)/gi)
     .map(chunk => {
       if (chunk.toLowerCase().includes("<br")) return chunk;
 
@@ -114,10 +150,7 @@ if (letterContainer) {
   letterContainer.innerHTML = wrappedHTML;
 
   gsap.fromTo(".letter-word",
-    {
-      opacity: 0.15,
-      y: "0.6em"
-    },
+    { opacity: 0.15, y: "0.6em" },
     {
       opacity: 1,
       y: "0em",
@@ -134,7 +167,7 @@ if (letterContainer) {
 }
 
 /* --------------------------------
-Flair animation helper
+Flair helper
 ------------------------------------ */
 function playAnimation(shape) {
   let tl = gsap.timeline();
@@ -155,7 +188,7 @@ function playAnimation(shape) {
 }
 
 /* --------------------------------
-Final: image trail (scoped only to .final)
+Final: image trail (scoped)
 ------------------------------------ */
 const finalSection = document.querySelector(".final");
 const flair = gsap.utils.toArray(".flair");
@@ -163,7 +196,6 @@ const flair = gsap.utils.toArray(".flair");
 let gap = 100;
 let index = 0;
 let wrapper = gsap.utils.wrap(0, flair.length);
-gsap.defaults({ duration: 1 });
 
 let mousePos = { x: 0, y: 0 };
 let lastMousePos = { x: 0, y: 0 };
@@ -175,13 +207,8 @@ if (finalSection) {
     mousePos = { x: e.clientX, y: e.clientY };
   });
 
-  finalSection.addEventListener("mouseenter", () => {
-    isHoveringFinal = true;
-  });
-
-  finalSection.addEventListener("mouseleave", () => {
-    isHoveringFinal = false;
-  });
+  finalSection.addEventListener("mouseenter", () => isHoveringFinal = true);
+  finalSection.addEventListener("mouseleave", () => isHoveringFinal = false);
 }
 
 gsap.ticker.add(ImageTrail);
@@ -194,16 +221,8 @@ function ImageTrail() {
     lastMousePos.y - mousePos.y
   );
 
-  cachedMousePos.x = gsap.utils.interpolate(
-    cachedMousePos.x || mousePos.x,
-    mousePos.x,
-    0.1
-  );
-  cachedMousePos.y = gsap.utils.interpolate(
-    cachedMousePos.y || mousePos.y,
-    mousePos.y,
-    0.1
-  );
+  cachedMousePos.x = gsap.utils.interpolate(cachedMousePos.x || mousePos.x, mousePos.x, 0.1);
+  cachedMousePos.y = gsap.utils.interpolate(cachedMousePos.y || mousePos.y, mousePos.y, 0.1);
 
   if (travelDistance > gap) {
     animateImage();
@@ -212,10 +231,7 @@ function ImageTrail() {
 }
 
 function animateImage() {
-  if (!flair.length) return;
-
-  let wrappedIndex = wrapper(index);
-  let img = flair[wrappedIndex];
+  let img = flair[wrapper(index)];
   if (!img) return;
 
   gsap.killTweensOf(img);
