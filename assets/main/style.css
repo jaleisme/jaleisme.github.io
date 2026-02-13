@@ -1,0 +1,15 @@
+.text-burgundy {
+    color: #96001B !important;
+}
+.bg-burgundy {
+    background-color: #96001B !important;
+}
+.preloader{
+    z-index: 99999;
+    position: absolute;
+    top: 0;
+}
+.preloader-bar{
+    width: 20vw;
+    height: 100vh;
+}
