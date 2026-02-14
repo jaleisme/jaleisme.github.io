@@ -1,6 +1,6 @@
 @font-face {
   font-family: 'Editorial'; /* Name you will use in your CSS */
-  src: url('./fonts/PPEditorialNew-Regular.otf') format('opentype'); /* Path to the font file */
+  src: url('../fonts/PPEditorialNew-Regular.otf') format('opentype'); /* Path to the font file */
   font-weight: normal; /* Define the weight (normal, bold, or specific values) */
   font-style: normal; /* Define the style (normal, italic, oblique) */
   font-display: swap; /* Control font loading behavior */
@@ -8,7 +8,7 @@
 
 @font-face {
   font-family: 'Montreal'; /* Name you will use in your CSS */
-  src: url('./fonts/PPNeueMontreal-Book.otf') format('opentype'); /* Path to the font file */
+  src: url('../fonts/PPNeueMontreal-Book.otf') format('opentype'); /* Path to the font file */
   font-weight: normal; /* Define the weight (normal, bold, or specific values) */
   font-style: normal; /* Define the style (normal, italic, oblique) */
   font-display: swap; /* Control font loading behavior */

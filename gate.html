@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- ======================================================
+      Meta
+    ======================================================= -->
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Faizal Ramadhan | Product Designer & Business Analyst</title>
+
+    <!-- ======================================================
+      External Libraries
+    ======================================================= -->
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.1/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.1/dist/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
+    <!-- ======================================================
+      Custom Styles
+    ======================================================= -->
+    <style>
+      /* ------------------------------
+        Fonts
+      ------------------------------ */
+      @font-face {
+        font-family: "Editorial";
+        src: url("./assets/fonts/PPEditorialNew-Regular.otf") format("opentype");
+        font-weight: normal;
+        font-style: normal;
+        font-display: swap;
+      }
+
+      @font-face {
+        font-family: "Montreal";
+        src: url("./assets/fonts/PPNeueMontreal-Book.otf") format("opentype");
+        font-weight: normal;
+        font-style: normal;
+        font-display: swap;
+      }
+
+      .text-editorial {
+        font-family: "Editorial";
+      }
+
+      .text-montreal {
+        font-family: "Montreal";
+      }
+
+      /* ------------------------------
+        Base
+      ------------------------------ */
+      body {
+        background-color: #05050b;
+        letter-spacing: -0.02em;
+      }
+
+      /* ------------------------------
+        Space Background
+      ------------------------------ */
+      .space-bg {
+        position: fixed;
+        inset: 0;
+        z-index: -1;
+      }
+
+      .galaxy {
+        position: absolute;
+        inset: -20%;
+        background:
+          radial-gradient(circle at 30% 40%, rgba(140, 90, 255, 0.25), transparent 40%),
+          radial-gradient(circle at 70% 60%, rgba(255, 100, 180, 0.18), transparent 45%),
+          radial-gradient(circle at 50% 50%, rgba(80, 120, 255, 0.15), transparent 55%);
+        filter: blur(80px);
+        opacity: 1;
+      }
+
+      .stars {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+      }
+
+      .star {
+        position: absolute;
+        width: 0.125rem;
+        height: 0.125rem;
+        background: white;
+        border-radius: 50%;
+        opacity: 0.7;
+        box-shadow:
+          0 0 6px rgba(255, 255, 255, 0.4),
+          0 0 12px rgba(160, 200, 255, 0.25);
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- ======================================================
+      Background
+    ======================================================= -->
+    <div class="space-bg">
+      <div class="galaxy"></div>
+      <div class="stars"></div>
+    </div>
+
+    <!-- ======================================================
+      Hero
+    ======================================================= -->
+    <div class="hero h-screen flex flex-col items-center justify-center gap-4 text-montreal">
+      <h1 class="text-5xl text-white text-editorial select-none">
+        What's The Magic Word?
+      </h1>
+
+      <input
+        id="magic-spell"
+        type="text"
+        autocomplete="off"
+        class="outline-0 bg-white text-md border-1 px-[0.75rem] py-[0.5rem] rounded-full w-[20vw] uppercase font-medium text-dark focus:outline-2 focus:outline-sky-500"
+      />
+
+      <button
+        type="button"
+        id="magic-button"
+        class="px-[1rem] py-[0.875rem] rounded-full bg-neutral-950 text-white font-semibold select-none hover:bg-neutral-900 hover:cursor-pointer active:bg-neutral-950"
+      >
+        Try The Magic Word
+      </button>
+    </div>
+
+    <script>
+        // Core Functions
+        const generateHash = (string) => {
+            let hash = 0;
+
+            for (const char of string) {
+                hash = (hash << 5) - hash + char.charCodeAt(0);
+                hash |= 0; // constrain to 32-bit integer
+            }
+
+            return hash;
+        };
+
+        document.getElementById("magic-button").addEventListener("click", () => {
+            const magicSpell = document.getElementById("magic-spell");
+            let value = magicSpell.value.trim().toLowerCase();
+
+            if (!value) {
+                alert("Say the magic word first.");
+                return;
+            }
+
+            if (generateHash(value) === -1162277419) {
+                window.open("./val-26.html", "_blank");
+            }
+        });
+
+        // ANIMATIONS
+        const starsContainer = document.querySelector(".stars");
+        const STAR_COUNT = 512;
+
+        // Create stars
+        for (let i = 0; i < STAR_COUNT; i++) {
+            const star = document.createElement("div");
+            star.classList.add("star");
+
+            const size = gsap.utils.random(1, 3); // px
+            star.style.width = `${size}px`;
+            star.style.height = `${size}px`;
+
+            star.style.left = `${Math.random() * 100}%`;
+            star.style.top = `${Math.random() * 100}%`;
+
+            starsContainer.appendChild(star);
+        }
+
+        // Star glow pulse
+        gsap.to(".star", {
+            scale: 1.4,
+            opacity: 1,
+            duration: 3,
+            ease: "sine.inOut",
+            yoyo: true,
+            repeat: -1,
+            stagger: {
+                each: 0.08,
+                from: "random",
+            },
+        });
+
+        // Parallax drift
+        gsap.to(".stars", {
+            x: -40,
+            y: 40,
+            duration: 40,
+            ease: "none",
+            repeat: -1,
+            yoyo: true,
+        });
+
+        // Galaxy slow movement
+        gsap.to(".galaxy", {
+            rotation: 2,
+            scale: 1.05,
+            duration: 60,
+            ease: "none",
+            repeat: -1,
+            yoyo: true,
+        });
+    </script>
+  </body>
+</html>
