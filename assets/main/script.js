@@ -37,35 +37,68 @@ if (isMobileDevice()) {
 }
 
 /* --------------------------------
+Preload Init
+------------------------------------ */
+function playPreloaderReveal() {
+	const tl = gsap.timeline();
+
+	tl.set([
+		"#preloader-bar-1",
+		"#preloader-bar-2",
+		"#preloader-bar-3",
+		"#preloader-bar-4",
+		"#preloader-bar-5"
+	], {
+		height: "100vh"
+	});
+
+	tl.to("#preloader-bar-1", { height: 0, duration: .8, ease: "expo.inOut" });
+	tl.to("#preloader-bar-2", { height: 0, duration: .8, ease: "expo.inOut" }, .1);
+	tl.to("#preloader-bar-3", { height: 0, duration: .8, ease: "expo.inOut" }, .2);
+	tl.to("#preloader-bar-4", { height: 0, duration: .8, ease: "expo.inOut" }, .3);
+	tl.to("#preloader-bar-5", { height: 0, duration: .8, ease: "expo.inOut" }, .4);
+}
+
+/* --------------------------------
 Preload → reveal
 ------------------------------------ */
 window.addEventListener("load", () => {
+	playPreloaderReveal();
+});
 
-  const tl = gsap.timeline();
+/* --------------------------------
+Handle back/forward cache restore
+------------------------------------ */
+window.addEventListener("pageshow", (event) => {
+	if (event.persisted) {
+		window.location.reload();
+	}
+});
 
-  tl.to("#preloader-bar-1", {
-    height: 0,
-    duration: .8,
-    ease: "expo.inOut"
-  });
-  tl.to("#preloader-bar-2", {
-    height: 0,
-    duration: .8,
-    ease: "expo.inOut"
-  }, .1);
-  tl.to("#preloader-bar-3", {
-    height: 0,
-    duration: .8,
-    ease: "expo.inOut"
-  }, .2);
-  tl.to("#preloader-bar-4", {
-    height: 0,
-    duration: .8,
-    ease: "expo.inOut"
-  }, .3);
-  tl.to("#preloader-bar-5", {
-    height: 0,
-    duration: .8,
-    ease: "expo.inOut"
-  }, .4);
+
+/* --------------------------------
+Postload → overlay
+------------------------------------ */
+let isTransitioning = false;
+
+document.querySelectorAll(".navigation").forEach((el) => {
+	el.addEventListener("click", function (event) {
+		event.preventDefault();
+		if (isTransitioning) return;
+
+		isTransitioning = true;
+
+		const link = event.currentTarget;
+		const tl = gsap.timeline();
+
+		tl.to("#preloader-bar-1", { height: "100vh", duration: .8, ease: "expo.inOut" });
+		tl.to("#preloader-bar-2", { height: "100vh", duration: .8, ease: "expo.inOut" }, .1);
+		tl.to("#preloader-bar-3", { height: "100vh", duration: .8, ease: "expo.inOut" }, .2);
+		tl.to("#preloader-bar-4", { height: "100vh", duration: .8, ease: "expo.inOut" }, .3);
+		tl.to("#preloader-bar-5", { height: "100vh", duration: .8, ease: "expo.inOut" }, .4);
+
+		setTimeout(() => {
+			window.location.href = link.href;
+		}, 2000);
+	});
 });
