@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AVIF Image Compressor (Frontend)</title>
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'media',
+      theme: {
+        extend: {
+          colors: {
+            primary: '#ef4444' // red-500
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- GSAP -->
+  <script src="https://unpkg.com/gsap@3/dist/gsap.min.js"></script>
+  <script src="https://unpkg.com/gsap@3/dist/Draggable.min.js"></script>
+</head>
+<body class="bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 min-h-screen">
+
+  <main class="max-w-5xl mx-auto p-6 space-y-6">
+
+    <header class="space-y-1">
+      <h1 class="text-2xl font-semibold">AVIF Image Compressor</h1>
+      <p class="text-sm text-zinc-500 dark:text-zinc-400">
+        Pure frontend utility · Drag & drop · AVIF with WebP fallback
+      </p>
+    </header>
+
+    <!-- Dropzone -->
+    <section id="dropzone"
+      class="relative border-2 border-dashed border-zinc-300 dark:border-zinc-700 rounded-xl p-8 text-center transition
+             hover:border-primary cursor-pointer bg-white/60 dark:bg-zinc-900">
+      <input id="fileInput" type="file" accept="image/*" class="hidden" />
+      <p class="text-sm text-zinc-500">Drag & drop an image here, or click to upload</p>
+      <p class="text-xs text-zinc-400 mt-1">PNG, JPG, WebP supported</p>
+
+      <div id="thumbWrap" class="mt-4 hidden">
+        <img id="thumb" class="mx-auto max-h-48 rounded-lg shadow" />
+        <p id="fileMeta" class="mt-2 text-xs text-zinc-500"></p>
+      </div>
+    </section>
+
+    <!-- Controls -->
+    <section id="controls" class="grid md:grid-cols-3 gap-4 opacity-50 pointer-events-none">
+      <div class="space-y-2">
+        <label class="text-sm font-medium">Quality</label>
+        <input id="quality" type="range" min="10" max="90" step="10" value="60"
+          class="w-full accent-primary">
+        <div class="flex justify-between text-xs text-zinc-500">
+          <span>10%</span><span>30%</span><span>50%</span><span>70%</span><span>90%</span>
+        </div>
+      </div>
+
+      <div class="space-y-2">
+        <label class="text-sm font-medium">Max Width</label>
+        <select id="maxWidth"
+          class="w-full rounded-lg border border-zinc-300 dark:border-zinc-700 bg-transparent p-2">
+          <option value="3000">3000px (max)</option>
+          <option value="2000">2000px</option>
+          <option value="1200">1200px</option>
+          <option value="800">800px</option>
+        </select>
+      </div>
+
+      <div class="space-y-2">
+        <label class="text-sm font-medium">Output Format</label>
+        <div id="formatInfo" class="text-sm text-zinc-500">
+          Detecting AVIF support…
+        </div>
+      </div>
+    </section>
+
+    <!-- Action -->
+    <section class="flex gap-3">
+      <button id="compressBtn"
+        class="px-4 py-2 rounded-lg bg-primary text-white disabled:opacity-40">
+        Compress now
+      </button>
+      <button id="resetBtn"
+        class="px-4 py-2 rounded-lg border border-zinc-300 dark:border-zinc-700">
+        Reset
+      </button>
+    </section>
+
+    <!-- Result -->
+    <section id="result" class="hidden space-y-4">
+      <div class="flex justify-between text-sm text-zinc-500">
+        <span id="beforeSize"></span>
+        <span id="afterSize"></span>
+      </div>
+
+      <!-- Before / After Reveal -->
+      <div class="relative w-full overflow-hidden rounded-xl border border-zinc-200 dark:border-zinc-800">
+        <div class="relative">
+          <img id="afterImg" class="block w-full" />
+          <div id="revealMask" class="absolute top-0 left-0 h-full overflow-hidden">
+            <img id="beforeImg" class="block w-full" />
+          </div>
+          <div id="handle"
+            class="absolute top-0 h-full w-1 bg-primary cursor-ew-resize"></div>
+        </div>
+      </div>
+
+      <div class="flex gap-3">
+        <a id="downloadBtn"
+          class="px-4 py-2 rounded-lg bg-primary text-white inline-block">
+          Download result
+        </a>
+      </div>
+    </section>
+
+    <footer class="pt-8 text-xs text-zinc-400">
+      Runs fully in-browser. AVIF encoding depends on browser support.
+    </footer>
+  </main>
+
+<script>
+const dropzone = document.getElementById("dropzone");
+const fileInput = document.getElementById("fileInput");
+const thumb = document.getElementById("thumb");
+const thumbWrap = document.getElementById("thumbWrap");
+const fileMeta = document.getElementById("fileMeta");
+const controls = document.getElementById("controls");
+const compressBtn = document.getElementById("compressBtn");
+const resetBtn = document.getElementById("resetBtn");
+const result = document.getElementById("result");
+const beforeImg = document.getElementById("beforeImg");
+const afterImg = document.getElementById("afterImg");
+const revealMask = document.getElementById("revealMask");
+const handle = document.getElementById("handle");
+const qualityInput = document.getElementById("quality");
+const maxWidthSelect = document.getElementById("maxWidth");
+const formatInfo = document.getElementById("formatInfo");
+const beforeSize = document.getElementById("beforeSize");
+const afterSize = document.getElementById("afterSize");
+const downloadBtn = document.getElementById("downloadBtn");
+
+let originalFile;
+let originalURL;
+
+function supportsType(type) {
+  const c = document.createElement("canvas");
+  try {
+    return c.toDataURL(type).startsWith(`data:${type}`);
+  } catch {
+    return false;
+  }
+}
+
+const supportsAvif = supportsType("image/avif");
+const supportsWebp = supportsType("image/webp");
+
+if (supportsAvif) {
+  formatInfo.textContent = "AVIF supported ✓";
+} else if (supportsWebp) {
+  formatInfo.textContent = "AVIF not supported. Exporting WebP ⚠️";
+} else {
+  formatInfo.textContent = "Neither AVIF nor WebP supported ❌";
+}
+
+dropzone.addEventListener("click", () => fileInput.click());
+
+dropzone.addEventListener("dragover", e => {
+  e.preventDefault();
+  dropzone.classList.add("border-primary");
+});
+
+dropzone.addEventListener("dragleave", () => {
+  dropzone.classList.remove("border-primary");
+});
+
+dropzone.addEventListener("drop", e => {
+  e.preventDefault();
+  dropzone.classList.remove("border-primary");
+  handleFile(e.dataTransfer.files[0]);
+});
+
+fileInput.addEventListener("change", e => {
+  handleFile(e.target.files[0]);
+});
+
+function handleFile(file) {
+  if (!file || !file.type.startsWith("image/")) {
+    alert("Invalid file type");
+    return;
+  }
+
+  originalFile = file;
+  originalURL = URL.createObjectURL(file);
+
+  thumb.src = originalURL;
+  thumbWrap.classList.remove("hidden");
+  fileMeta.textContent = `${file.name} · ${(file.size / 1024).toFixed(1)} KB`;
+
+  controls.classList.remove("opacity-50", "pointer-events-none");
+}
+
+compressBtn.addEventListener("click", async () => {
+  if (!originalFile) return;
+
+  if (!supportsAvif && !supportsWebp) {
+    alert("Your browser does not support AVIF or WebP export.");
+    return;
+  }
+
+  const img = new Image();
+  img.src = originalURL;
+  await img.decode();
+
+  const maxWidth = parseInt(maxWidthSelect.value, 10);
+  const scale = Math.min(1, maxWidth / img.width);
+
+  const canvas = document.createElement("canvas");
+  canvas.width = img.width * scale;
+  canvas.height = img.height * scale;
+
+  const ctx = canvas.getContext("2d");
+  ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+  const quality = parseInt(qualityInput.value, 10) / 100;
+  const type = supportsAvif ? "image/avif" : "image/webp";
+
+  canvas.toBlob(blob => {
+    const outURL = URL.createObjectURL(blob);
+
+    beforeImg.src = originalURL;
+    afterImg.src = outURL;
+
+    beforeSize.textContent = `Before: ${(originalFile.size / 1024).toFixed(1)} KB`;
+    afterSize.textContent = `After: ${(blob.size / 1024).toFixed(1)} KB`;
+
+    downloadBtn.href = outURL;
+    downloadBtn.download = `compressed.${type.split("/")[1]}`;
+
+    result.classList.remove("hidden");
+
+    setupReveal();
+  }, type, quality);
+});
+
+function setupReveal() {
+  const w = result.querySelector("img").clientWidth;
+  revealMask.style.width = (w / 2) + "px";
+  handle.style.left = (w / 2) + "px";
+
+  gsap.set(handle, { x: 0 });
+
+  Draggable.create(handle, {
+    type: "x",
+    bounds: result.querySelector(".relative"),
+    onDrag() {
+      revealMask.style.width = (this.x + handle.offsetWidth) + "px";
+    }
+  });
+}
+
+resetBtn.addEventListener("click", () => {
+  location.reload();
+});
+</script>
+
+</body>
+</html>
